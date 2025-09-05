@@ -10,17 +10,8 @@
   <header>
     <div class="top-bar">
       <h1>Mercado Online</h1>
-      <input type="text" placeholder="🔎 Buscar produtos..." />
+      <input type="text" id="busca-produtos" placeholder="🔎 Buscar produtos..." />
     </div>
-    <nav>
-      <ul>
-        <li><a href="#">Início</a></li>
-        <li><a href="#">Produtos</a></li>
-        <li><a href="#">Categorias</a></li>
-        <li><a href="#">Sobre Nós</a></li>
-        <li><a href="#">Contato</a></li>
-      </ul>
-    </nav>
   </header>
 
   <main>
@@ -37,53 +28,10 @@
 
   <button id="btn-listar-produtos">Listar Produtos</button>
 
-<!-- Seção de produtos inicialmente escondida -->
-<section class="produtos" id="produtos-destaque" style="display: none;">
-  <h2>🔥 Produtos em Destaque 🔥</h2>
-  <div class="grid-produtos">
-    <div class="produto">
-      <img src="https://www.minhareceita.com.br/app/uploads/2025/05/R0525-arroz-japones-650x355-1.webp" alt="Produto 1">
-      <h3>Arroz 5kg</h3>
-      <p>R$ 25,00</p>
-      <button>Comprar</button>
-    </div>
-
-    <div class="produto">
-      <img src="https://rrmedicos.com.br/wp-content/uploads/2023/07/feijao-enriquecido-saudavel-receita-rr-medicos-1.jpg" alt="Produto 2">
-      <h3>Feijão 1kg</h3>
-      <p>R$ 7,00</p>
-      <button>Comprar</button>
-    </div>
-
-    <div class="produto">
-      <img src="https://blog.onduleze.com.br/wp-content/uploads/2024/02/1-16.jpg" alt="Produto 3">
-      <h3>Óleo de Soja</h3>
-      <p>R$ 8,50</p>
-      <button>Comprar</button>
-    </div>
-
-    <div class="produto">
-      <img src="https://drdanielstellin.com.br/wp-content/uploads/2018/05/acucar.jpg" alt="Produto 4">
-      <h3>Açúcar 5kg</h3>
-      <p>R$ 19,90</p>
-      <button>Comprar</button>
-    </div>
-
-    <div class="produto">
-      <img src="https://s2-oglobo.glbimg.com/_86_pBxpzM4e40drYhNoCf2aCvA=/0x0:22945x10231/888x0/smart/filters:strip_icc()/i.s3.glbimg.com/v1/AUTH_da025474c0c44edd99332dddb09cabe8/internal_photos/bs/2023/V/U/yjvs4DQ06ni0A8IA9vNg/fresh-milk-mug-jug-wooden-table-1-.jpg" alt="Produto 5">
-      <h3>Leite Integral</h3>
-      <p>R$ 5,50</p>
-      <button>Comprar</button>
-    </div>
-
-    <div class="produto">
-      <img src="https://images.educamaisbrasil.com.br/content/noticias/dia-mundial-do-cafe-saiba-como-a-bebida-pode-melhorar-seus-estudos_g.jpg" alt="Produto 6">
-      <h3>Café 500g</h3>
-      <p>R$ 12,00</p>
-      <button>Comprar</button>
-    </div>
-  </div>
-</section>
+  <section class="produtos" id="produtos-destaque" style="display: none;">
+    <h2>🔥 Produtos em Destaque 🔥</h2>
+    <div class="grid-produtos" id="grid-produtos-destaque"></div>
+  </section>
 
     <!-- Sobre Nós -->
     <section class="sobre">
@@ -108,6 +56,8 @@
         <h3>Atualizar Produto</h3>
         <input type="number" id="id-update" placeholder="ID do produto">
         <input type="text" id="desc-update" placeholder="Novo nome do produto">
+        <input type="number" id="preco-update" placeholder="Novo preço do produto" step="0.01">
+        <input type="text" id="imagem-update" placeholder="Nova URL da imagem">
         <button onclick="atualizarProduto()">Atualizar</button>
       
         <h3>Deletar Produto</h3>
@@ -133,16 +83,15 @@
         <h3>📍 Endereço</h3>
         <p>Av. Brasil, 1234 - Cascavel/PR</p>
       </div>
-      <div>
-        <h3>🔗 Links Úteis</h3>
-        <ul>
-          <li><a href="#">Política de Privacidade</a></li>
-          <li><a href="#">Termos de Uso</a></li>
-          <li><a href="#">Ajuda</a></li>
-        </ul>
-      </div>
     </div>
     <p>&copy; 2025 Mercado Online. Todos os direitos reservados.</p>
   </footer>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      ListarProdutos();
+    });
+  </script>
+
 </body>
 </html>

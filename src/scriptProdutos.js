@@ -19,26 +19,22 @@ async function ListarProdutos() {
     const res = await fetch('http://localhost:8081/produtos');
     const produtos = await res.json();
 
-    const grid = document.querySelector("#produtos-destaque .grid-produtos");
-    
-    // Mantém os produtos já existentes, mas remove apenas os produtos adicionados antes
-    const produtosAdicionados = grid.querySelectorAll(".produto.adicionado");
-    produtosAdicionados.forEach(p => p.remove());
+    const grid = document.getElementById("grid-produtos-destaque");
+    grid.innerHTML = ""; // limpa antes de renderizar de novo
 
     produtos.forEach(p => {
-        // Cria um produto somente se ainda não existe
-        if (!grid.querySelector(`.produto[data-id="${p.id}"]`)) {
-            const div = document.createElement("div");
-            div.classList.add("produto", "adicionado"); // marca como adicionado
-            div.dataset.id = p.id; // identifica o produto
-            div.innerHTML = `
-                <img src="${p.imagem}" alt="${p.nome}">
-                <h3>${p.nome}</h3>
-                <p>R$ ${p.preco}</p>
-                <button>Comprar</button>
-            `;
-            grid.appendChild(div);
-        }
+        const div = document.createElement("div");
+        div.classList.add("produto");
+        div.dataset.id = p.id;
+
+        div.innerHTML = `
+            <img src="${p.imagem}" alt="${p.nome}">
+            <h3>${p.nome}</h3>
+            <p>R$ ${p.preco}</p>
+            <small>ID: ${p.id}</small>
+            <button>Comprar</button>
+        `;
+        grid.appendChild(div);
     });
 }
 
@@ -69,19 +65,102 @@ async function adicionarProduto() {
 async function atualizarProduto() {
     const id = document.getElementById("id-update").value;
     const nome = document.getElementById("desc-update").value;
-    await fetch(`http://localhost:8081/produtos/${id}`, {
+    const preco = document.getElementById("preco-update").value;
+    const imagem = document.getElementById("imagem-update").value;
+
+    if (!id || !nome || !preco || !imagem) {
+        alert("Preencha todos os campos: ID, nome, preço e imagem!");
+        return;
+    }
+
+    const res = await fetch(`http://localhost:8081/produtos/${id}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ nome })
+        body: JSON.stringify({ nome, preco, imagem })
     });
+
+    if (res.status === 404) {
+        // Produto fixo → altera no DOM
+        const produtoDiv = document.querySelector(`.produto[data-id="${id}"]`);
+        if (produtoDiv) {
+            produtoDiv.querySelector("h3").textContent = nome;
+            produtoDiv.querySelector("p").textContent = `R$ ${preco}`;
+            produtoDiv.querySelector("img").src = imagem;
+        }
+    }
+
     ListarProdutos();
+
+    // Limpa os campos
     document.getElementById("id-update").value = "";
     document.getElementById("desc-update").value = "";
+    document.getElementById("preco-update").value = "";
+    document.getElementById("imagem-update").value = "";
 }
 
 async function deletarProduto() {
-    const id = document.getElementById("id-delete").value;
-    await fetch(`http://localhost:8081/produtos/${id}`, { method: "DELETE" });
+    const id = document.getElementById("id-delete").value.trim();
+    if (!id) {
+      alert("Informe o ID para deletar!");
+      return;
+    }
+  
+    // tenta deletar no backend
+    let notFound = false;
+    try {
+      const res = await fetch(`http://localhost:8081/produtos/${id}`, { method: "DELETE" });
+      if (res.status === 404) notFound = true;
+    } catch (e) {
+      // se der erro de rede, vamos pelo DOM mesmo
+      console.error(e);
+      notFound = true;
+    }
+  
+    // remove do DOM (funciona pra fixos 101–106 e também pros adicionados)
+    const node = document.querySelector(`.produto[data-id="${id}"]`);
+    if (node) {
+      node.remove();
+    } else if (notFound) {
+      alert(`Produto ${id} não encontrado no DOM nem no backend.`);
+    }
+  
+    // repopula os produtos adicionados do backend (mantém os fixos intocados)
     ListarProdutos();
     document.getElementById("id-delete").value = "";
-}
+  }
+
+const inputBusca = document.getElementById("busca-produtos");
+
+inputBusca.addEventListener("input", async () => {
+    const termo = inputBusca.value.toLowerCase();
+
+    // Pega todos os produtos do backend
+    const res = await fetch('http://localhost:8081/produtos');
+    const produtos = await res.json();
+
+    const grid = document.getElementById("grid-produtos-destaque");
+    grid.innerHTML = "";
+
+    // Filtra produtos que contenham o termo no nome
+    const filtrados = produtos.filter(p => p.nome.toLowerCase().includes(termo));
+
+    filtrados.forEach(p => {
+        const div = document.createElement("div");
+        div.classList.add("produto");
+        div.dataset.id = p.id;
+
+        div.innerHTML = `
+            <img src="${p.imagem}" alt="${p.nome}">
+            <h3>${p.nome}</h3>
+            <p>R$ ${p.preco}</p>
+            <small>ID: ${p.id}</small>
+            <button>Comprar</button>
+        `;
+        grid.appendChild(div);
+    });
+
+    // Mostra a seção de produtos caso esteja oculta
+    if (produtosDestaque.style.display === "none") {
+        produtosDestaque.style.display = "block";
+    }
+});

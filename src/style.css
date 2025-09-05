@@ -92,8 +92,9 @@ main {
 
 .grid-produtos {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  grid-template-columns: repeat(auto-fit, 200px);
   gap: 25px;
+  justify-content: center;
   margin-top: 20px;
 }
 
