@@ -17,7 +17,7 @@ let produtos = [
         preco: 7.00, 
         imagem: "https://rrmedicos.com.br/wp-content/uploads/2023/07/feijao-enriquecido-saudavel-receita-rr-medicos-1.jpg" 
     },
-    { 
+    {
         id: 3, 
         nome: "Óleo de Soja", 
         preco: 8.50, 
